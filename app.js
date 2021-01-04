@@ -2,40 +2,60 @@
 const todoInput = document.querySelector(".text");
 const addButton = document.querySelector(".add");
 const todoDate = document.querySelector(".date");
-const todoList = document.querySelector(".todo-list");
+let todoList = document.querySelector(".todo-list");
 
+const SYMBOL_LIMIT = 160;
 let lastId = 0;
 
 //Event listeners
 if (addButton) {
   addButton.addEventListener("click", addTodo);
 }
-//Functions
 
+//Functions
 function addTodo(event) {
   event.preventDefault();
-  if (todoInput.value.length < 1 || todoInput.value.length > 160) {
+
+  if (todoInput.value.length < 1 || todoInput.value.length > SYMBOL_LIMIT) {
     return;
   }
 
+  const id = getLastId();
+  const description = todoInput.value;
+  const todo = {
+    id,
+    checked: false,
+    description,
+    deadline: todoDate.value,
+  };
+  saveTodo(todo);
+
+  const list = getTodoList();
+  if (list) {
+    list.map((todo) => displayTodo(todo));
+  }
+  todoInput.value = "";
+}
+
+function displayTodo({ id, checked, description, deadline }) {
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
-  const id = getLastId();
   newTodo.setAttribute("id", String(id));
 
   const checkbox = document.createElement("input");
   checkbox.setAttribute("type", "checkbox");
   checkbox.classList.add("todo-checkbox");
+  checkbox.checked = checked;
   newTodo.appendChild(checkbox);
 
-  const description = document.createElement("p");
-  description.classList.add("todo-description");
-  description.innerText = todoInput.value;
-  newTodo.appendChild(description);
+  const descr = document.createElement("p");
+  descr.classList.add("todo-description");
+  descr.innerText = description;
+  newTodo.appendChild(descr);
 
   const timeLeft = document.createElement("p");
   timeLeft.classList.add("todo-time-left");
-  timeLeft.innerText = getTimeLeft();
+  timeLeft.innerText = getTimeLeft(deadline);
   newTodo.appendChild(timeLeft);
 
   const remove = document.createElement("button");
@@ -44,7 +64,6 @@ function addTodo(event) {
   newTodo.appendChild(remove);
 
   todoList.appendChild(newTodo);
-  //TODO save to sessionStorage
 }
 
 function getLastId() {
@@ -52,11 +71,11 @@ function getLastId() {
   return lastId;
 }
 
-function getTimeLeft() {
-  if (todoDate.value === "") {
+function getTimeLeft(deadline) {
+  if (deadline === "") {
     return null;
   }
-  const time = calculateTimeLeft(todoDate.value);
+  const time = calculateTimeLeft(deadline);
   if (!time) {
     return null;
   }
@@ -70,8 +89,8 @@ function getTimeLeft() {
   return timeLeft;
 }
 
-function calculateTimeLeft(targetDate) {
-  const date = new Date(targetDate);
+function calculateTimeLeft(deadline) {
+  const date = new Date(deadline);
   const currentDate = new Date();
   const timeInMin = (date.getTime() - currentDate.getTime()) / 1000 / 60;
   if (timeInMin < 0) {
@@ -82,4 +101,23 @@ function calculateTimeLeft(targetDate) {
   const minutes = Math.floor(timeInMin - days * 60 * 24 - hours * 60);
 
   return { days, hours, minutes };
+}
+
+function saveTodo(todo) {
+  console.log("todo", todo);
+  const list = sessionStorage.getItem("todoList");
+  let todoList = JSON.parse(list);
+  console.log("todoList", todoList);
+  if (!todoList) {
+    todoList = new Array();
+  }
+  console.log("created todoList", todoList);
+  todoList.push(todo);
+  console.log("updated todoList", todoList);
+  sessionStorage.setItem("todoList", JSON.stringify(todoList));
+}
+
+function getTodoList() {
+  const list = sessionStorage.getItem("todoList");
+  return JSON.parse(list);
 }

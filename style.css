@@ -36,3 +36,7 @@ form .text {
   padding: 0 10px 0 10px;
   border: 1px solid green;
 }
+
+.todo-description {
+  word-break: break-all;
+}
