@@ -12,11 +12,13 @@ if (addButton) {
 }
 window.addEventListener("storage", renderTodoList);
 
-renderTodoList();
+const eventStorage = new Event("storage");
+window.dispatchEvent(eventStorage);
 
 //Functions
 function addTodo(event) {
   event.preventDefault();
+
   if (todoInput.value.length < 1 || todoInput.value.length > SYMBOL_LIMIT) {
     return;
   }
@@ -25,23 +27,25 @@ function addTodo(event) {
   const description = todoInput.value;
   const todo = {
     id,
-    checked: false,
     description,
     deadline: todoDate.value,
+    completed: null,
   };
   saveTodo(todo);
   todoInput.value = "";
 }
 
 function renderTodoList() {
+  console.log("im in rendertodolist");
+  todoList.innerHTML = "";
   const list = getTodoList();
   if (list) {
     list.forEach(displayTodo);
   }
 }
 
-function displayTodo({ id, checked, description, deadline }) {
-  console.log("display todo");
+function displayTodo({ id, description, deadline, completed }) {
+  console.log("display todo", id);
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
   newTodo.setAttribute("key", `todo-${id}`);
@@ -50,7 +54,8 @@ function displayTodo({ id, checked, description, deadline }) {
   const checkbox = document.createElement("input");
   checkbox.setAttribute("type", "checkbox");
   checkbox.classList.add("todo-checkbox");
-  checkbox.checked = checked;
+  checkbox.checked = completed ? true : false;
+  checkbox.addEventListener("click", checkTodo);
   newTodo.appendChild(checkbox);
 
   const descr = document.createElement("p");
@@ -86,8 +91,34 @@ function remove(event) {
 function removeTodo(event) {
   const removeButton = event.target;
   const todo = removeButton.parentElement;
-  const id = todo.getAttribute("id");
+  const id = Number(todo.getAttribute("id"));
   const list = getTodoList();
-  const updatedList = list.filter((item) => item.id !== Number(id));
+  const updatedList = list.filter((item) => item.id !== id);
+  saveTodoList(updatedList);
+}
+
+function checkTodo(event) {
+  const checkbox = event.target;
+  const todo = checkbox.parentElement;
+  const id = Number(todo.getAttribute("id"));
+  const list = getTodoList();
+
+  const date = new Date();
+  const dateCompleted =
+    String(date.getFullYear()) +
+    "/" +
+    String(date.getMonth() + 1) +
+    "/" +
+    String(date.getDate()) +
+    "/" +
+    String(date.getHours()) +
+    ":" +
+    String(date.getMinutes());
+
+  const updatedList = list.map((item) =>
+    item.id === id
+      ? { ...item, completed: completed ? null : dateCompleted }
+      : item
+  );
   saveTodoList(updatedList);
 }

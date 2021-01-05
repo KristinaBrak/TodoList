@@ -9,6 +9,7 @@ function saveTodo(todo) {
   todoList.push(todo);
   // console.log("updated todoList", todoList);
   sessionStorage.setItem("todoList", JSON.stringify(todoList));
+  window.dispatchEvent(eventStorage);
 }
 
 function getTodoList() {
