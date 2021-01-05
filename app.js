@@ -4,16 +4,13 @@ const addButton = document.getElementById("add");
 const todoDate = document.getElementById("date");
 let todoList = document.getElementById("todo-list");
 
-let lastId = 0;
-
 //Event listeners
 if (addButton) {
   addButton.addEventListener("click", addTodo);
 }
 window.addEventListener("storage", renderTodoList);
 
-const eventStorage = new Event("storage");
-window.dispatchEvent(eventStorage);
+window.dispatchEvent(storageEvent);
 
 //Functions
 function addTodo(event) {
@@ -36,7 +33,6 @@ function addTodo(event) {
 }
 
 function renderTodoList() {
-  console.log("im in rendertodolist");
   todoList.innerHTML = "";
   const list = getTodoList();
   if (list) {
@@ -45,7 +41,6 @@ function renderTodoList() {
 }
 
 function displayTodo({ id, description, deadline, completed }) {
-  console.log("display todo", id);
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
   newTodo.setAttribute("key", `todo-${id}`);
@@ -77,12 +72,7 @@ function displayTodo({ id, description, deadline, completed }) {
   todoList.appendChild(newTodo);
 }
 
-function getLastId() {
-  lastId += 1;
-  return lastId;
-}
 function remove(event) {
-  console.log("remove");
   if (window.confirm("Delete this item?")) {
     removeTodo(event);
   }
@@ -115,10 +105,11 @@ function checkTodo(event) {
     ":" +
     String(date.getMinutes());
 
-  const updatedList = list.map((item) =>
-    item.id === id
-      ? { ...item, completed: completed ? null : dateCompleted }
-      : item
-  );
+  const updatedList = list.map((item) => {
+    function getCompletedValue() {}
+    if (item.id === id) {
+      return;
+    }
+  });
   saveTodoList(updatedList);
 }

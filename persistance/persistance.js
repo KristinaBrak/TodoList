@@ -1,5 +1,12 @@
+const storageEvent = new Event("storage");
+
+function setStorageItem(key, value) {
+  sessionStorage.setItem(key, value);
+  window.dispatchEvent(storageEvent);
+}
+
 function saveTodo(todo) {
-  const list = sessionStorage.getItem("todoList");
+  const list = sessionStorage.getItem(TODO_LIST);
   let todoList = JSON.parse(list);
   // console.log("todoList", todoList);
   if (!todoList) {
@@ -8,12 +15,11 @@ function saveTodo(todo) {
   // console.log("created todoList", todoList);
   todoList.push(todo);
   // console.log("updated todoList", todoList);
-  sessionStorage.setItem("todoList", JSON.stringify(todoList));
-  window.dispatchEvent(eventStorage);
+  setStorageItem(TODO_LIST, JSON.stringify(todoList));
 }
 
 function getTodoList() {
-  const list = sessionStorage.getItem("todoList");
+  const list = sessionStorage.getItem(TODO_LIST);
   if (list === "") {
     return [];
   }
@@ -23,10 +29,10 @@ function getTodoList() {
 function removeTodoFromSessionStorage(id) {
   const list = getTodoList();
   const updatedList = list.filter((item) => (item.id === id ? null : item));
-  sessionStorage.setItem("todoList", JSON.stringify(updatedList));
+  setStorageItem(TODO_LIST, JSON.stringify(updatedList));
 }
 
 function saveTodoList(newList) {
   const list = JSON.stringify(newList);
-  sessionStorage.setItem("todoList", list);
+  setStorageItem(TODO_LIST, list);
 }
