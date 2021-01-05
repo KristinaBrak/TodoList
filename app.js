@@ -4,12 +4,19 @@ const addButton = document.querySelector(".add");
 const todoDate = document.querySelector(".date");
 let todoList = document.querySelector(".todo-list");
 
-const SYMBOL_LIMIT = 160;
 let lastId = 0;
 
 //Event listeners
 if (addButton) {
   addButton.addEventListener("click", addTodo);
+}
+if (todoList) {
+  todoList.addEventListener("click", deleteTodo);
+}
+
+const list = getTodoList();
+if (list) {
+  list.forEach(displayTodo);
 }
 
 //Functions
@@ -30,17 +37,15 @@ function addTodo(event) {
   };
   saveTodo(todo);
 
-  const list = getTodoList();
-  if (list) {
-    list.map((todo) => displayTodo(todo));
-  }
+  displayTodo(todo);
+
   todoInput.value = "";
 }
 
 function displayTodo({ id, checked, description, deadline }) {
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
-  newTodo.setAttribute("id", String(id));
+  newTodo.setAttribute("key", `todo-${id}`);
 
   const checkbox = document.createElement("input");
   checkbox.setAttribute("type", "checkbox");
@@ -62,6 +67,7 @@ function displayTodo({ id, checked, description, deadline }) {
   remove.classList.add("todo-remove");
   remove.innerText = "x";
   newTodo.appendChild(remove);
+  remove.addEventListener("click", removeItem);
 
   todoList.appendChild(newTodo);
 }
@@ -104,12 +110,11 @@ function calculateTimeLeft(deadline) {
 }
 
 function saveTodo(todo) {
-  console.log("todo", todo);
   const list = sessionStorage.getItem("todoList");
   let todoList = JSON.parse(list);
   console.log("todoList", todoList);
   if (!todoList) {
-    todoList = new Array();
+    todoList = [];
   }
   console.log("created todoList", todoList);
   todoList.push(todo);
@@ -119,5 +124,22 @@ function saveTodo(todo) {
 
 function getTodoList() {
   const list = sessionStorage.getItem("todoList");
+  if (list === "") {
+    return null;
+  }
   return JSON.parse(list);
+}
+
+function deleteTodo(event) {
+  const item = event.target;
+  if (item.classList[0] === "todo-remove") {
+    const todo = item.parentElement;
+    console.log(item);
+    todo.remove();
+  }
+  // const list = getTodoList();
+  // const updatedList = list.filter((todo) =>
+  //   todo.key === item.parentElement.key ? null : todo
+  // );
+  // sessionStorage.setItem("todoList", JSON.stringify(updatedList));
 }
