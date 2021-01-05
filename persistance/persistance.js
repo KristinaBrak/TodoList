@@ -1,8 +1,7 @@
 const storageEvent = new Event("storage");
 
 function setStorageItem(key, value) {
-  const result = sortList(value);
-  sessionStorage.setItem(key, JSON.stringify(result));
+  sessionStorage.setItem(key, JSON.stringify(value));
   window.dispatchEvent(storageEvent);
 }
 
@@ -36,20 +35,4 @@ function removeTodoFromSessionStorage(id) {
 
 function saveTodoList(newList) {
   setStorageItem(TODO_LIST, newList);
-}
-
-function sortList(list) {
-  if (!list) {
-    list = [];
-  }
-  console.log(list);
-  const uncompleted = list.filter((item) => item.dateCompleted === null);
-  const list1 = uncompleted.sort((a, b) => {
-    console.log(a.deadline);
-    console.log(b.deadline);
-    return Number(b.deadline) - Number(a.deadline);
-  });
-
-  const completed = list.filter((item) => item.dateCompleted !== null);
-  return [...list1, ...completed];
 }

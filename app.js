@@ -35,8 +35,10 @@ function addTodo(event) {
 function renderTodoList() {
   todoList.innerHTML = "";
   const list = getTodoList();
+
   if (list) {
-    list.forEach(displayTodo);
+    const sortedList = sortList(list);
+    sortedList.forEach(displayTodo);
   }
 }
 
@@ -109,4 +111,25 @@ function toggleTodo(event) {
   console.log("updatedList", updatedList);
 
   saveTodoList(updatedList);
+}
+
+function sortList(list) {
+  console.log(list);
+  const uncompleted = list.filter((item) => item.dateCompleted === null);
+  const list1 = uncompleted.sort((a, b) => {
+    const first = a.deadline
+      ? new Date(a.deadline).getTime()
+      : Number.MAX_SAFE_INTEGER;
+    const second = b.deadline
+      ? new Date(b.deadline).getTime()
+      : Number.MAX_SAFE_INTEGER;
+    return first - second;
+  });
+
+  const completed = list.filter((item) => item.dateCompleted !== null);
+  const list2 = completed.sort(
+    (a, b) =>
+      new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime()
+  );
+  return [...list1, ...list2];
 }
