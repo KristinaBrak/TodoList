@@ -1,7 +1,8 @@
 const storageEvent = new Event("storage");
 
 function setStorageItem(key, value) {
-  sessionStorage.setItem(key, value);
+  const result = sortList(value);
+  sessionStorage.setItem(key, JSON.stringify(result));
   window.dispatchEvent(storageEvent);
 }
 
@@ -15,7 +16,8 @@ function saveTodo(todo) {
   // console.log("created todoList", todoList);
   todoList.push(todo);
   // console.log("updated todoList", todoList);
-  setStorageItem(TODO_LIST, JSON.stringify(todoList));
+
+  setStorageItem(TODO_LIST, todoList);
 }
 
 function getTodoList() {
@@ -29,10 +31,25 @@ function getTodoList() {
 function removeTodoFromSessionStorage(id) {
   const list = getTodoList();
   const updatedList = list.filter((item) => (item.id === id ? null : item));
-  setStorageItem(TODO_LIST, JSON.stringify(updatedList));
+  setStorageItem(TODO_LIST, updatedList);
 }
 
 function saveTodoList(newList) {
-  const list = JSON.stringify(newList);
-  setStorageItem(TODO_LIST, list);
+  setStorageItem(TODO_LIST, newList);
+}
+
+function sortList(list) {
+  if (!list) {
+    list = [];
+  }
+  console.log(list);
+  const uncompleted = list.filter((item) => item.dateCompleted === null);
+  const list1 = uncompleted.sort((a, b) => {
+    console.log(a.deadline);
+    console.log(b.deadline);
+    return Number(b.deadline) - Number(a.deadline);
+  });
+
+  const completed = list.filter((item) => item.dateCompleted !== null);
+  return [...list1, ...completed];
 }

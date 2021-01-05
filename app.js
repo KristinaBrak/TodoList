@@ -26,7 +26,7 @@ function addTodo(event) {
     id,
     description,
     deadline: todoDate.value,
-    completed: null,
+    dateCompleted: null,
   };
   saveTodo(todo);
   todoInput.value = "";
@@ -40,17 +40,19 @@ function renderTodoList() {
   }
 }
 
-function displayTodo({ id, description, deadline, completed }) {
+function displayTodo({ id, description, deadline, dateCompleted }) {
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
-  newTodo.setAttribute("key", `todo-${id}`);
+  if (dateCompleted) {
+    newTodo.classList.add("completed");
+  }
   newTodo.setAttribute("id", id);
 
   const checkbox = document.createElement("input");
   checkbox.setAttribute("type", "checkbox");
   checkbox.classList.add("todo-checkbox");
-  checkbox.checked = completed ? true : false;
-  checkbox.addEventListener("click", checkTodo);
+  checkbox.checked = dateCompleted ? true : false;
+  checkbox.addEventListener("change", toggleTodo);
   newTodo.appendChild(checkbox);
 
   const descr = document.createElement("p");
@@ -87,29 +89,24 @@ function removeTodo(event) {
   saveTodoList(updatedList);
 }
 
-function checkTodo(event) {
+function toggleTodo(event) {
+  console.log("Im in toggleTodo");
   const checkbox = event.target;
   const todo = checkbox.parentElement;
   const id = Number(todo.getAttribute("id"));
   const list = getTodoList();
 
   const date = new Date();
-  const dateCompleted =
-    String(date.getFullYear()) +
-    "/" +
-    String(date.getMonth() + 1) +
-    "/" +
-    String(date.getDate()) +
-    "/" +
-    String(date.getHours()) +
-    ":" +
-    String(date.getMinutes());
+  const dateCompleted = `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
   const updatedList = list.map((item) => {
-    function getCompletedValue() {}
-    if (item.id === id) {
-      return;
-    }
+    return item.id === id
+      ? { ...item, dateCompleted: checkbox.checked ? dateCompleted : null }
+      : item;
   });
+  console.log("updatedList", updatedList);
+
   saveTodoList(updatedList);
 }
