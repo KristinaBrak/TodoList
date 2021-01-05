@@ -22,12 +22,14 @@ function addTodo(event) {
 
   const id = getLastId();
   const description = todoInput.value;
+  const deadline = new Date(todoDate.value).toISOString();
   const todo = {
     id,
     description,
-    deadline: todoDate.value,
+    deadline,
     dateCompleted: null,
   };
+  console.log(todo.deadline.nodeName);
   saveTodo(todo);
   todoInput.value = "";
 }
@@ -66,7 +68,7 @@ function addTodoToDOM({ id, description, deadline, dateCompleted }) {
 
   const timeLeft = document.createElement("p");
   timeLeft.classList.add("todo-time-left");
-  timeLeft.innerText = getDeadline(deadline);
+  timeLeft.innerText = dateCompleted ? "Completed" : getDeadline(deadline);
   newTodo.appendChild(timeLeft);
 
   const removeButton = document.createElement("button");
@@ -91,10 +93,7 @@ function removeTodo(id) {
 }
 
 function toggleTodo(checked, id) {
-  const date = new Date();
-  const dateCompleted = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  const dateCompleted = new Date().toISOString();
 
   const list = getTodoList();
   const updatedList = list.map((item) =>

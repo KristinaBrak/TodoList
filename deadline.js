@@ -4,15 +4,9 @@ function getDeadline(deadline) {
   }
   const time = calculateDeadline(deadline);
   if (!time) {
-    return null;
+    return `Missed deadline ${getMissedDeadline(deadline)}`;
   }
-  const timeLeft =
-    String(time.days) +
-    " days " +
-    String(time.hours) +
-    "h " +
-    String(time.minutes) +
-    "min";
+  const timeLeft = `${time.days} days ${time.hours}h ${time.minutes}min`;
   return timeLeft;
 }
 
@@ -28,4 +22,11 @@ function calculateDeadline(deadline) {
   const minutes = Math.floor(timeInMin - days * 60 * 24 - hours * 60);
 
   return { days, hours, minutes };
+}
+
+function getMissedDeadline(deadline) {
+  const date = new Date(deadline);
+  return `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 }
