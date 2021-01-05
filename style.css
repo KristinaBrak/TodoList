@@ -40,3 +40,6 @@ form .text {
 .todo-description {
   word-break: break-all;
 }
+.completed .todo-description {
+  text-decoration: line-through;
+}

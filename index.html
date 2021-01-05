@@ -8,15 +8,17 @@
   </head>
   <body>
     <form>
-      <input type="text" class="text" />
-      <button class="add" type="submit">Add</button>
+      <input type="text" id="text" class="text" />
+      <button class="add" id="add" type="submit">Add</button>
 
-      <input type="datetime-local" class="date" />
+      <input type="datetime-local" class="date" id="date" />
     </form>
-    <div class="todo-container">
-      <ul class="todo-list"></ul>
+    <div class="todo-container" id="todo-container">
+      <ul class="todo-list" id="todo-list"></ul>
     </div>
     <script src="./consts.js"></script>
+    <script src="./persistance.js"></script>
+    <script src="./deadline.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
