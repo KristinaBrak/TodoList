@@ -1,8 +1,8 @@
-function getTimeLeft(deadline) {
+function getDeadline(deadline) {
   if (deadline === "") {
     return null;
   }
-  const time = calculateTimeLeft(deadline);
+  const time = calculateDeadline(deadline);
   if (!time) {
     return null;
   }
@@ -16,7 +16,7 @@ function getTimeLeft(deadline) {
   return timeLeft;
 }
 
-function calculateTimeLeft(deadline) {
+function calculateDeadline(deadline) {
   const date = new Date(deadline);
   const currentDate = new Date();
   const timeInMin = (date.getTime() - currentDate.getTime()) / 1000 / 60;

@@ -38,11 +38,11 @@ function renderTodoList() {
 
   if (list) {
     const sortedList = sortList(list);
-    sortedList.forEach(displayTodo);
+    sortedList.forEach(addTodoToDOM);
   }
 }
 
-function displayTodo({ id, description, deadline, dateCompleted }) {
+function addTodoToDOM({ id, description, deadline, dateCompleted }) {
   const newTodo = document.createElement("li");
   newTodo.classList.add("todo-item");
   if (dateCompleted) {
@@ -54,67 +54,59 @@ function displayTodo({ id, description, deadline, dateCompleted }) {
   checkbox.setAttribute("type", "checkbox");
   checkbox.classList.add("todo-checkbox");
   checkbox.checked = dateCompleted ? true : false;
-  checkbox.addEventListener("change", toggleTodo);
+  checkbox.addEventListener("change", (event) =>
+    toggleTodo(event.target.checked, Number(newTodo.id))
+  );
   newTodo.appendChild(checkbox);
 
-  const descr = document.createElement("p");
-  descr.classList.add("todo-description");
-  descr.innerText = description;
-  newTodo.appendChild(descr);
+  const descriptionElement = document.createElement("p");
+  descriptionElement.classList.add("todo-description");
+  descriptionElement.innerText = description;
+  newTodo.appendChild(descriptionElement);
 
   const timeLeft = document.createElement("p");
   timeLeft.classList.add("todo-time-left");
-  timeLeft.innerText = getTimeLeft(deadline);
+  timeLeft.innerText = getDeadline(deadline);
   newTodo.appendChild(timeLeft);
 
   const removeButton = document.createElement("button");
   removeButton.classList.add("todo-remove");
   removeButton.innerText = "x";
-  removeButton.addEventListener("click", remove);
+  removeButton.addEventListener("click", () => remove(Number(newTodo.id)));
   newTodo.appendChild(removeButton);
 
   todoList.appendChild(newTodo);
 }
 
-function remove(event) {
+function remove(id) {
   if (window.confirm("Delete this item?")) {
-    removeTodo(event);
+    removeTodo(id);
   }
 }
 
-function removeTodo(event) {
-  const removeButton = event.target;
-  const todo = removeButton.parentElement;
-  const id = Number(todo.getAttribute("id"));
+function removeTodo(id) {
   const list = getTodoList();
   const updatedList = list.filter((item) => item.id !== id);
   saveTodoList(updatedList);
 }
 
-function toggleTodo(event) {
-  console.log("Im in toggleTodo");
-  const checkbox = event.target;
-  const todo = checkbox.parentElement;
-  const id = Number(todo.getAttribute("id"));
-  const list = getTodoList();
-
+function toggleTodo(checked, id) {
   const date = new Date();
   const dateCompleted = `${date.getFullYear()}-${
     date.getMonth() + 1
   }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
-  const updatedList = list.map((item) => {
-    return item.id === id
-      ? { ...item, dateCompleted: checkbox.checked ? dateCompleted : null }
-      : item;
-  });
-  console.log("updatedList", updatedList);
+  const list = getTodoList();
+  const updatedList = list.map((item) =>
+    item.id === id
+      ? { ...item, dateCompleted: checked ? dateCompleted : null }
+      : item
+  );
 
   saveTodoList(updatedList);
 }
 
 function sortList(list) {
-  console.log(list);
   const uncompleted = list.filter((item) => item.dateCompleted === null);
   const list1 = uncompleted.sort((a, b) => {
     const first = a.deadline
