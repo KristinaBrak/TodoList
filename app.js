@@ -1,10 +1,8 @@
-//Selectors
 const todoInput = document.getElementById("text");
 const addButton = document.getElementById("add");
 const todoDate = document.getElementById("date");
 let todoList = document.getElementById("todo-list");
 
-//Event listeners
 if (addButton) {
   addButton.addEventListener("click", addTodo);
 }
@@ -12,7 +10,6 @@ window.addEventListener("storage", renderTodoList);
 
 window.dispatchEvent(storageEvent);
 
-//Functions
 function addTodo(event) {
   event.preventDefault();
 
@@ -22,14 +19,13 @@ function addTodo(event) {
 
   const id = getLastId();
   const description = todoInput.value;
-  const deadline = new Date(todoDate.value).toISOString();
   const todo = {
     id,
     description,
-    deadline,
+    deadline: todoDate.value,
     dateCompleted: null,
   };
-  console.log(todo.deadline.nodeName);
+
   saveTodo(todo);
   todoInput.value = "";
 }
@@ -68,7 +64,9 @@ function addTodoToDOM({ id, description, deadline, dateCompleted }) {
 
   const deadlineElement = document.createElement("p");
   deadlineElement.classList.add("todo-deadline");
-  deadlineElement.innerText = dateCompleted ? "Completed" : getDeadline(deadline);
+  deadlineElement.innerText = dateCompleted
+    ? "Completed"
+    : getDeadline(deadline);
   newTodo.appendChild(deadlineElement);
 
   const removeButton = document.createElement("button");
