@@ -7,11 +7,16 @@
     <title>Todo List</title>
   </head>
   <body>
-    <form>
-      <input type="text" id="text" class="text" />
+    <h1>My Todo List</h1>
+    <form class="form">
+      <input type="text" id="text" class="text" placeholder="I'm going to..." />
+      <input
+        type="datetime-local"
+        class="date"
+        id="date"
+        placeholder="YYYY-MM-DD HH:MM"
+      />
       <button class="add" id="add" type="submit">Add</button>
-
-      <input type="datetime-local" class="date" id="date" />
     </form>
     <div class="todo-container" id="todo-container">
       <ul class="todo-list" id="todo-list"></ul>

@@ -66,10 +66,10 @@ function addTodoToDOM({ id, description, deadline, dateCompleted }) {
   descriptionElement.innerText = description;
   newTodo.appendChild(descriptionElement);
 
-  const timeLeft = document.createElement("p");
-  timeLeft.classList.add("todo-time-left");
-  timeLeft.innerText = dateCompleted ? "Completed" : getDeadline(deadline);
-  newTodo.appendChild(timeLeft);
+  const deadlineElement = document.createElement("p");
+  deadlineElement.classList.add("todo-deadline");
+  deadlineElement.innerText = dateCompleted ? "Completed" : getDeadline(deadline);
+  newTodo.appendChild(deadlineElement);
 
   const removeButton = document.createElement("button");
   removeButton.classList.add("todo-remove");
